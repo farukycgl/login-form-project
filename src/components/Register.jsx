@@ -1,10 +1,11 @@
-import { Button, Card, CardBody, CardHeader, Form, FormFeedback, FormGroup, Input, Label } from "reactstrap";
+import { Button, Card, CardBody, CardFooter, CardHeader, Form, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 const initialValues = {
     email: "",
     password: "",
-}; 
+};
 
 const errorMessages = {
     email: "Geçerli bir email adresi giriniz!",
@@ -28,6 +29,7 @@ export default function Register() {
         password: false,
     });
     const [isValid, setIsValid] = useState(false);
+    const [id, setId] = useState("");
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -56,6 +58,14 @@ export default function Register() {
     const handleSubmit = (event) => {
         event.preventDefault();
         if (!isValid) return;
+        axios.post("https://reqres.in/api/users", formData)
+            .then((response) => {
+                setId(response.data.id);
+                setFormData(initialValues);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
     };
 
     useEffect(() => {
@@ -111,6 +121,9 @@ export default function Register() {
                     </Button>
                 </Form>
             </CardBody>
+            <CardFooter>
+                ID: {id}
+            </CardFooter>
         </Card>
     )
 }
